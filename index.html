@@ -129,6 +129,77 @@
             font-style: italic;
         }
 
+        .settings-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .settings-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .setting-label {
+            font-size: 14px;
+            color: #666;
+            margin: 0;
+        }
+
+        .setting-input {
+            width: 80px;
+            padding: 8px 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 16px;
+            text-align: center;
+            transition: border-color 0.3s ease;
+        }
+
+        .setting-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .result-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: 500;
+            color: #333;
+            border: 2px solid #e1e5e9;
+            animation: slideIn 0.4s ease;
+        }
+
+        .result-item.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         @media (max-width: 480px) {
             .container {
                 padding: 20px;
@@ -140,6 +211,17 @@
             
             textarea {
                 min-height: 120px;
+            }
+            
+            .setting-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .setting-input {
+                width: 100%;
+                max-width: 120px;
             }
         }
     </style>
@@ -156,6 +238,14 @@
             ></textarea>
         </div>
         
+        <div class="settings-section">
+            <div class="settings-title">詳細設定</div>
+            <div class="setting-item">
+                <label class="setting-label" for="selectCount">選択人数:</label>
+                <input type="number" id="selectCount" class="setting-input" value="1" min="1">
+            </div>
+        </div>
+        
         <button class="button" onclick="selectRandom()">ランダム選択</button>
         
         <div class="result-section">
@@ -169,6 +259,7 @@
         function selectRandom() {
             const textarea = document.getElementById('names');
             const resultDiv = document.getElementById('result');
+            const selectCountInput = document.getElementById('selectCount');
             
             const lines = textarea.value
                 .split('\n')
@@ -181,11 +272,23 @@
                 return;
             }
             
-            const randomIndex = Math.floor(Math.random() * lines.length);
-            const selected = lines[randomIndex];
+            const selectCount = Math.min(parseInt(selectCountInput.value) || 1, lines.length);
             
-            resultDiv.className = 'result selected';
-            resultDiv.textContent = selected;
+            if (selectCount === 1) {
+                const randomIndex = Math.floor(Math.random() * lines.length);
+                const selected = lines[randomIndex];
+                
+                resultDiv.className = 'result selected';
+                resultDiv.textContent = selected;
+            } else {
+                const shuffled = [...lines].sort(() => Math.random() - 0.5);
+                const selected = shuffled.slice(0, selectCount);
+                
+                resultDiv.className = 'result';
+                resultDiv.innerHTML = selected
+                    .map(name => `<div class="result-item selected">${name}</div>`)
+                    .join('');
+            }
         }
 
         document.getElementById('names').addEventListener('keydown', function(e) {
