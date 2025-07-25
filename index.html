@@ -403,10 +403,49 @@
             }
         }
 
+        function updateUrlFromTextarea() {
+            const textarea = document.getElementById('names');
+            const lines = textarea.value
+                .split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+            
+            if (lines.length > 0) {
+                const encoded = encodeURIComponent(lines.join('\n'));
+                window.location.hash = encoded;
+            } else {
+                window.location.hash = '';
+            }
+        }
+
+        function loadFromUrl() {
+            const hash = window.location.hash.substring(1);
+            if (hash) {
+                try {
+                    const decoded = decodeURIComponent(hash);
+                    document.getElementById('names').value = decoded;
+                } catch (e) {
+                    console.error('Failed to decode URL fragment:', e);
+                }
+            }
+        }
+
+        document.getElementById('names').addEventListener('input', function() {
+            updateUrlFromTextarea();
+        });
+
         document.getElementById('names').addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
                 selectRandom();
             }
+        });
+
+        window.addEventListener('hashchange', function() {
+            loadFromUrl();
+        });
+
+        window.addEventListener('load', function() {
+            loadFromUrl();
         });
     </script>
 </body>
