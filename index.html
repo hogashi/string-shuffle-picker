@@ -329,12 +329,12 @@
             </div>
         </div>
         
-        <button class="button" onclick="selectRandom()">ランダム選択</button>
+        <button id="selectButton" class="button">ランダム選択</button>
         
         <div class="result-section">
             <div class="result-header">
                 <div class="result-title">結果</div>
-                <button id="copyButton" class="copy-button" onclick="copyResult()">コピー</button>
+                <button id="copyButton" class="copy-button">コピー</button>
             </div>
             <div id="result" class="result">
                 <span class="empty-message">選択候補を入力してボタンを押してください</span>
@@ -577,6 +577,10 @@
         window.addEventListener('hashchange', function() {
             loadFromUrl();
         });
+
+        document.getElementById('selectButton').addEventListener('click', selectRandom);
+        
+        document.getElementById('copyButton').addEventListener('click', copyResult);
 
         window.addEventListener('load', function() {
             loadFromUrl();
