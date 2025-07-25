@@ -216,6 +216,22 @@
             font-family: 'Courier New', monospace;
         }
 
+        .setting-checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: #667eea;
+        }
+
+        .roulette-animation {
+            animation: roulette 0.1s ease-in-out;
+        }
+
+        @keyframes roulette {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
         .setting-input:focus {
             outline: none;
             border-color: #667eea;
@@ -307,6 +323,10 @@
                 <label class="setting-label" for="displayFormat">表示フォーマット:</label>
                 <input type="text" id="displayFormat" class="setting-input format-input" placeholder="%s" style="width: 200px;">
             </div>
+            <div class="setting-item">
+                <label class="setting-label" for="enableAnimation">アニメーション:</label>
+                <input type="checkbox" id="enableAnimation" class="setting-checkbox" checked>
+            </div>
         </div>
         
         <button class="button" onclick="selectRandom()">ランダム選択</button>
@@ -330,25 +350,8 @@
             return format.replace(/%s/g, text);
         }
 
-        function selectRandom() {
-            const textarea = document.getElementById('names');
+        function showFinalResult(lines, selectCount, displayFormat) {
             const resultDiv = document.getElementById('result');
-            const selectCountInput = document.getElementById('selectCount');
-            const displayFormatInput = document.getElementById('displayFormat');
-            
-            const lines = textarea.value
-                .split('\n')
-                .map(line => line.trim())
-                .filter(line => line.length > 0);
-            
-            if (lines.length === 0) {
-                resultDiv.className = 'result';
-                resultDiv.innerHTML = '<span class="empty-message">選択候補を入力してください</span>';
-                return;
-            }
-            
-            const selectCount = Math.min(parseInt(selectCountInput.value) || 1, lines.length);
-            const displayFormat = displayFormatInput.value;
             
             if (selectCount === 1) {
                 const randomIndex = Math.floor(Math.random() * lines.length);
@@ -371,6 +374,82 @@
             }
             
             document.getElementById('copyButton').classList.add('show');
+        }
+
+        function animateRoulette(lines, selectCount, displayFormat, duration = 2000) {
+            const resultDiv = document.getElementById('result');
+            const startTime = Date.now();
+            let animationTimeout;
+            
+            function updateDisplay() {
+                if (selectCount === 1) {
+                    const randomIndex = Math.floor(Math.random() * lines.length);
+                    const selected = lines[randomIndex];
+                    const formattedText = formatText(selected, displayFormat);
+                    
+                    resultDiv.className = 'result selected roulette-animation';
+                    resultDiv.textContent = formattedText;
+                } else {
+                    const shuffled = [...lines].sort(() => Math.random() - 0.5);
+                    const selected = shuffled.slice(0, selectCount);
+                    
+                    resultDiv.className = 'result roulette-animation';
+                    resultDiv.innerHTML = selected
+                        .map(item => {
+                            const formattedText = formatText(item, displayFormat);
+                            return `<div class="result-item selected">${formattedText}</div>`;
+                        })
+                        .join('');
+                }
+            }
+            
+            function animate() {
+                const elapsed = Date.now() - startTime;
+                const progress = elapsed / duration;
+                
+                if (progress >= 1) {
+                    showFinalResult(lines, selectCount, displayFormat);
+                    return;
+                }
+                
+                updateDisplay();
+                
+                const speed = Math.max(50, 200 * (1 - progress));
+                animationTimeout = setTimeout(animate, speed);
+            }
+            
+            animate();
+        }
+
+        function selectRandom() {
+            const textarea = document.getElementById('names');
+            const resultDiv = document.getElementById('result');
+            const selectCountInput = document.getElementById('selectCount');
+            const displayFormatInput = document.getElementById('displayFormat');
+            const enableAnimationInput = document.getElementById('enableAnimation');
+            
+            const lines = textarea.value
+                .split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+            
+            if (lines.length === 0) {
+                resultDiv.className = 'result';
+                resultDiv.innerHTML = '<span class="empty-message">選択候補を入力してください</span>';
+                return;
+            }
+            
+            const selectCount = Math.min(parseInt(selectCountInput.value) || 1, lines.length);
+            const displayFormat = displayFormatInput.value;
+            const enableAnimation = enableAnimationInput.checked;
+            
+            document.getElementById('copyButton').classList.remove('show');
+            
+            if (enableAnimation) {
+                animateRoulette(lines, selectCount, displayFormat);
+            } else {
+                showFinalResult(lines, selectCount, displayFormat);
+            }
         }
 
         function copyResult() {
@@ -416,7 +495,8 @@
             const data = {
                 items: lines,
                 count: parseInt(selectCountInput.value) || 1,
-                format: displayFormatInput.value || ''
+                format: displayFormatInput.value || '',
+                animation: document.getElementById('enableAnimation').checked
             };
             
             if (lines.length > 0 || data.count !== 1 || data.format !== '') {
@@ -453,6 +533,10 @@
                     if (data.format) {
                         document.getElementById('displayFormat').value = data.format;
                     }
+                    
+                    if (data.animation !== undefined) {
+                        document.getElementById('enableAnimation').checked = data.animation;
+                    }
                 } catch (e) {
                     console.error('Failed to decode URL fragment:', e);
                 }
@@ -468,6 +552,10 @@
         });
 
         document.getElementById('displayFormat').addEventListener('input', function() {
+            updateUrlFromInputs();
+        });
+
+        document.getElementById('enableAnimation').addEventListener('change', function() {
             updateUrlFromInputs();
         });
 
