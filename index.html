@@ -91,6 +91,50 @@
             margin-top: 30px;
         }
 
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .result-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .copy-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+            display: none;
+        }
+
+        .copy-button:hover {
+            background: #218838;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        }
+
+        .copy-button:active {
+            transform: translateY(0);
+        }
+
+        .copy-button.copied {
+            background: #17a2b8;
+        }
+
+        .copy-button.show {
+            display: inline-block;
+        }
+
         .result {
             background: #f8f9fa;
             border-radius: 10px;
@@ -232,6 +276,12 @@
             .format-input {
                 max-width: 250px;
             }
+            
+            .result-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -262,6 +312,10 @@
         <button class="button" onclick="selectRandom()">ランダム選択</button>
         
         <div class="result-section">
+            <div class="result-header">
+                <div class="result-title">結果</div>
+                <button id="copyButton" class="copy-button" onclick="copyResult()">コピー</button>
+            </div>
             <div id="result" class="result">
                 <span class="empty-message">選択候補を入力してボタンを押してください</span>
             </div>
@@ -314,6 +368,38 @@
                         return `<div class="result-item selected">${formattedName}</div>`;
                     })
                     .join('');
+            }
+            
+            document.getElementById('copyButton').classList.add('show');
+        }
+
+        function copyResult() {
+            const resultDiv = document.getElementById('result');
+            const copyButton = document.getElementById('copyButton');
+            
+            let textToCopy = '';
+            
+            if (resultDiv.querySelector('.result-item')) {
+                const items = resultDiv.querySelectorAll('.result-item');
+                textToCopy = Array.from(items).map(item => item.textContent).join('');
+            } else {
+                textToCopy = resultDiv.textContent;
+            }
+            
+            if (textToCopy && !textToCopy.includes('選択候補を入力して')) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const originalText = copyButton.textContent;
+                    copyButton.textContent = 'コピー済み!';
+                    copyButton.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        copyButton.textContent = originalText;
+                        copyButton.classList.remove('copied');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('コピーに失敗しました:', err);
+                    alert('コピーに失敗しました');
+                });
             }
         }
 
