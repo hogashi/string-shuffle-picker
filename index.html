@@ -1,52 +1,52 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>String Shuffle Picker</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>String Shuffle Picker</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>String Shuffle Picker</h1>
-        
-        <div class="input-section">
-            <label for="names">選択候補を入力してください（1行に1つずつ）:</label>
-            <textarea 
-                id="names" 
-                placeholder="例:&#10;リンゴ&#10;バナナ&#10;オレンジ&#10;メロン"
-            ></textarea>
-        </div>
-        
-        <div class="settings-section">
-            <div class="settings-title">詳細設定</div>
-            <div class="setting-item">
-                <label class="setting-label" for="selectCount">選択数:</label>
-                <input type="number" id="selectCount" class="setting-input" value="1" min="1">
-            </div>
-            <div class="setting-item">
-                <label class="setting-label" for="displayFormat">表示フォーマット:</label>
-                <input type="text" id="displayFormat" class="setting-input format-input" placeholder="%s" style="width: 200px;">
-            </div>
-            <div class="setting-item">
-                <label class="setting-label" for="enableAnimation">アニメーション:</label>
-                <input type="checkbox" id="enableAnimation" class="setting-checkbox" checked>
-            </div>
-        </div>
-        
-        <button id="selectButton" class="button">ランダム選択</button>
-        
-        <div class="result-section">
-            <div class="result-header">
-                <div class="result-title">結果</div>
-                <button id="copyButton" class="copy-button">コピー</button>
-            </div>
-            <div id="result" class="result">
-                <span class="empty-message">選択候補を入力してボタンを押してください</span>
-            </div>
-        </div>
+  <div class="container">
+    <h1>String Shuffle Picker</h1>
+    
+    <div class="input-section">
+      <label for="names">選択候補を入力してください（1行に1つずつ）:</label>
+      <textarea 
+        id="names" 
+        placeholder="例:&#10;リンゴ&#10;バナナ&#10;オレンジ&#10;メロン"
+      ></textarea>
     </div>
+    
+    <div class="settings-section">
+      <div class="settings-title">詳細設定</div>
+      <div class="setting-item">
+        <label class="setting-label" for="selectCount">選択数:</label>
+        <input type="number" id="selectCount" class="setting-input" value="1" min="1">
+      </div>
+      <div class="setting-item">
+        <label class="setting-label" for="displayFormat">表示フォーマット:</label>
+        <input type="text" id="displayFormat" class="setting-input format-input" placeholder="%s" style="width: 200px;">
+      </div>
+      <div class="setting-item">
+        <label class="setting-label" for="enableAnimation">アニメーション:</label>
+        <input type="checkbox" id="enableAnimation" class="setting-checkbox" checked>
+      </div>
+    </div>
+    
+    <button id="selectButton" class="button">ランダム選択</button>
+    
+    <div class="result-section">
+      <div class="result-header">
+        <div class="result-title">結果</div>
+        <button id="copyButton" class="copy-button">コピー</button>
+      </div>
+      <div id="result" class="result">
+        <span class="empty-message">選択候補を入力してボタンを押してください</span>
+      </div>
+    </div>
+  </div>
 
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
