@@ -403,15 +403,24 @@
             }
         }
 
-        function updateUrlFromTextarea() {
+        function updateUrlFromInputs() {
             const textarea = document.getElementById('names');
+            const selectCountInput = document.getElementById('selectCount');
+            const displayFormatInput = document.getElementById('displayFormat');
+            
             const lines = textarea.value
                 .split('\n')
                 .map(line => line.trim())
                 .filter(line => line.length > 0);
             
-            if (lines.length > 0) {
-                const encoded = encodeURIComponent(lines.join('\n'));
+            const data = {
+                items: lines,
+                count: parseInt(selectCountInput.value) || 1,
+                format: displayFormatInput.value || ''
+            };
+            
+            if (lines.length > 0 || data.count !== 1 || data.format !== '') {
+                const encoded = encodeURIComponent(JSON.stringify(data));
                 window.location.hash = encoded;
             } else {
                 window.location.hash = '';
@@ -423,7 +432,27 @@
             if (hash) {
                 try {
                     const decoded = decodeURIComponent(hash);
-                    document.getElementById('names').value = decoded;
+                    let data;
+                    
+                    try {
+                        data = JSON.parse(decoded);
+                    } catch (e) {
+                        data = { items: decoded.split('\n'), count: 1, format: '' };
+                    }
+                    
+                    if (data.items && Array.isArray(data.items)) {
+                        document.getElementById('names').value = data.items.join('\n');
+                    } else if (typeof data === 'string') {
+                        document.getElementById('names').value = data;
+                    }
+                    
+                    if (data.count) {
+                        document.getElementById('selectCount').value = data.count;
+                    }
+                    
+                    if (data.format) {
+                        document.getElementById('displayFormat').value = data.format;
+                    }
                 } catch (e) {
                     console.error('Failed to decode URL fragment:', e);
                 }
@@ -431,7 +460,15 @@
         }
 
         document.getElementById('names').addEventListener('input', function() {
-            updateUrlFromTextarea();
+            updateUrlFromInputs();
+        });
+
+        document.getElementById('selectCount').addEventListener('input', function() {
+            updateUrlFromInputs();
+        });
+
+        document.getElementById('displayFormat').addEventListener('input', function() {
+            updateUrlFromInputs();
         });
 
         document.getElementById('names').addEventListener('keydown', function(e) {
