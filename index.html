@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ランダム選択ツール</title>
+    <title>ランダムピッカー</title>
     <style>
         * {
             margin: 0;
@@ -287,20 +287,20 @@
 </head>
 <body>
     <div class="container">
-        <h1>ランダム選択ツール</h1>
+        <h1>ランダムピッカー</h1>
         
         <div class="input-section">
             <label for="names">選択候補を入力してください（1行に1つずつ）:</label>
             <textarea 
                 id="names" 
-                placeholder="例:&#10;田中太郎&#10;佐藤花子&#10;鈴木一郎"
+                placeholder="例:&#10;リンゴ&#10;バナナ&#10;オレンジ&#10;メロン"
             ></textarea>
         </div>
         
         <div class="settings-section">
             <div class="settings-title">詳細設定</div>
             <div class="setting-item">
-                <label class="setting-label" for="selectCount">選択人数:</label>
+                <label class="setting-label" for="selectCount">選択数:</label>
                 <input type="number" id="selectCount" class="setting-input" value="1" min="1">
             </div>
             <div class="setting-item">
@@ -323,11 +323,11 @@
     </div>
 
     <script>
-        function formatName(name, format) {
+        function formatText(text, format) {
             if (!format || format.trim() === '') {
-                return name;
+                return text;
             }
-            return format.replace(/%s/g, name);
+            return format.replace(/%s/g, text);
         }
 
         function selectRandom() {
@@ -353,19 +353,19 @@
             if (selectCount === 1) {
                 const randomIndex = Math.floor(Math.random() * lines.length);
                 const selected = lines[randomIndex];
-                const formattedName = formatName(selected, displayFormat);
+                const formattedText = formatText(selected, displayFormat);
                 
                 resultDiv.className = 'result selected';
-                resultDiv.textContent = formattedName;
+                resultDiv.textContent = formattedText;
             } else {
                 const shuffled = [...lines].sort(() => Math.random() - 0.5);
                 const selected = shuffled.slice(0, selectCount);
                 
                 resultDiv.className = 'result';
                 resultDiv.innerHTML = selected
-                    .map(name => {
-                        const formattedName = formatName(name, displayFormat);
-                        return `<div class="result-item selected">${formattedName}</div>`;
+                    .map(item => {
+                        const formattedText = formatText(item, displayFormat);
+                        return `<div class="result-item selected">${formattedText}</div>`;
                     })
                     .join('');
             }
