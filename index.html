@@ -350,6 +350,15 @@
             return format.replace(/%s/g, text);
         }
 
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
         function showFinalResult(lines, selectCount, displayFormat) {
             const resultDiv = document.getElementById('result');
             
@@ -361,7 +370,7 @@
                 resultDiv.className = 'result selected';
                 resultDiv.textContent = formattedText;
             } else {
-                const shuffled = [...lines].sort(() => Math.random() - 0.5);
+                const shuffled = shuffleArray(lines);
                 const selected = shuffled.slice(0, selectCount);
                 
                 resultDiv.className = 'result';
@@ -390,7 +399,7 @@
                     resultDiv.className = 'result selected roulette-animation';
                     resultDiv.textContent = formattedText;
                 } else {
-                    const shuffled = [...lines].sort(() => Math.random() - 0.5);
+                    const shuffled = shuffleArray(lines);
                     const selected = shuffled.slice(0, selectCount);
                     
                     resultDiv.className = 'result roulette-animation';
